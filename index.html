@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ikigai Needs</title>
+<meta name="description" content="A reflective self-portrait based on Mieko Kamiya's needs for a life worth living." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  /* ---------- Palette & tokens ---------- */
+  :root{
+    --paper:      #E9E7DE;   /* warm washi ground */
+    --paper-card: #F2F1EA;   /* raised card */
+    --ink:        #1E2A46;   /* 藍 ai — indigo ink */
+    --ink-soft:   #43506E;   /* softened indigo for body */
+    --muted:      #77809A;   /* captions, anchors */
+    --line:       #C9C6B8;   /* hairlines */
+    --gold:       #B4894A;   /* 金 kin — brass, the resonance fill */
+    --gold-soft:  rgba(180,137,74,0.18);
+    --shu:        #C6502E;   /* 朱 shu — vermilion seal */
+    --focus:      #1E2A46;
+    --maxw: 720px;
+  }
+
+  *{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Inter", system-ui, sans-serif;
+    line-height:1.55;
+    /* faint paper texture via layered gradients, no external assets */
+    background-image:
+      radial-gradient(circle at 18% 12%, rgba(255,255,255,0.35), transparent 40%),
+      radial-gradient(circle at 85% 88%, rgba(30,42,70,0.03), transparent 45%);
+  }
+
+  .wrap{ max-width:var(--maxw); margin:0 auto; padding:clamp(28px,6vw,72px) clamp(20px,5vw,40px) 96px; }
+
+  /* ---------- Header ---------- */
+  .eyebrow{
+    font-size:13px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--gold); font-weight:600; margin:0 0 18px;
+  }
+  .eyebrow .jp{ font-family:"Spectral",serif; letter-spacing:0.05em; text-transform:none; color:var(--ink); }
+  h1{
+    font-family:"Spectral", Georgia, serif;
+    font-weight:500; font-size:clamp(30px,6vw,46px); line-height:1.12;
+    margin:0 0 6px; letter-spacing:-0.01em;
+  }
+  h1 .thin{ font-style:italic; color:var(--ink-soft); }
+  .lede{
+    font-family:"Spectral",serif; font-size:clamp(16px,2.4vw,19px);
+    color:var(--ink-soft); max-width:58ch; margin:20px 0 0;
+  }
+  .note{
+    font-size:13.5px; color:var(--muted); margin:22px 0 0; max-width:60ch;
+  }
+  .rule{ height:1px; background:var(--line); border:0; margin:40px 0; }
+
+  /* ---------- Progress ---------- */
+  .progress{
+    position:sticky; top:0; z-index:20; margin:0 0 8px;
+    background:linear-gradient(var(--paper),var(--paper) 70%, rgba(233,231,222,0));
+    padding:14px 0 10px;
+  }
+  .progress-track{ height:2px; background:var(--line); border-radius:2px; overflow:hidden; }
+  .progress-fill{ height:100%; width:0%; background:var(--gold); transition:width .35s ease; }
+  .progress-label{ font-size:12px; letter-spacing:0.06em; color:var(--muted); margin-top:8px; }
+
+  /* ---------- Items ---------- */
+  .item{
+    background:var(--paper-card);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:clamp(20px,4vw,30px);
+    margin:0 0 18px;
+    position:relative;
+  }
+  .item[data-answered="true"]{ border-color:var(--gold); }
+  .item-index{
+    font-family:"Inter",sans-serif; font-size:12px; font-weight:600;
+    letter-spacing:0.12em; color:var(--gold); text-transform:uppercase;
+  }
+  .item-title{
+    font-family:"Inter",sans-serif; font-weight:600; font-size:15px;
+    letter-spacing:0.02em; color:var(--ink); margin:2px 0 12px;
+  }
+  .item-statement{
+    font-family:"Spectral",serif; font-size:clamp(18px,3vw,22px);
+    line-height:1.4; color:var(--ink); margin:0 0 22px; font-weight:400;
+  }
+
+  /* Scale */
+  fieldset.scale{ border:0; margin:0; padding:0; }
+  legend.sr-only{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+  .scale-row{ display:flex; gap:6px; }
+  .scale-opt{ flex:1 1 0; }
+  .scale-opt input{ position:absolute; opacity:0; width:1px; height:1px; }
+  .scale-opt label{
+    display:flex; align-items:center; justify-content:center;
+    height:46px; border:1px solid var(--line); border-radius:2px;
+    background:transparent; color:var(--ink-soft);
+    font-size:15px; font-weight:500; cursor:pointer;
+    transition:background .15s, color .15s, border-color .15s, transform .05s;
+    user-select:none;
+  }
+  .scale-opt label:hover{ border-color:var(--gold); color:var(--ink); }
+  .scale-opt input:checked + label{
+    background:var(--ink); color:var(--paper-card); border-color:var(--ink);
+  }
+  .scale-opt input:focus-visible + label{
+    outline:2px solid var(--focus); outline-offset:2px;
+  }
+  .anchors{ display:flex; justify-content:space-between; margin-top:10px; }
+  .anchors span{ font-size:12px; color:var(--muted); letter-spacing:0.02em; }
+
+  /* Optional note */
+  .extra{ margin:26px 0 0; }
+  .extra label{ display:block; font-size:13px; color:var(--muted); margin-bottom:8px; letter-spacing:0.04em; }
+  .extra textarea{
+    width:100%; min-height:84px; resize:vertical; padding:12px 14px;
+    border:1px solid var(--line); border-radius:2px; background:var(--paper-card);
+    font-family:"Spectral",serif; font-size:16px; color:var(--ink);
+  }
+  .extra textarea:focus-visible{ outline:2px solid var(--focus); outline-offset:1px; }
+
+  .consent{ display:none; align-items:flex-start; gap:10px; margin:22px 0 0; font-size:13px; color:var(--ink-soft); }
+  .consent.show{ display:flex; }
+  .consent input{ margin-top:3px; }
+
+  /* Submit */
+  .actions{ margin:30px 0 0; }
+  .btn{
+    font-family:"Inter",sans-serif; font-weight:600; font-size:15px;
+    letter-spacing:0.03em; padding:15px 30px; border-radius:2px; cursor:pointer;
+    border:1px solid var(--ink); background:var(--ink); color:var(--paper);
+    transition:opacity .15s, transform .05s;
+  }
+  .btn:hover{ opacity:.9; }
+  .btn:active{ transform:translateY(1px); }
+  .btn:disabled{ opacity:.4; cursor:not-allowed; }
+  .btn.ghost{ background:transparent; color:var(--ink); }
+  .btn-row{ display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
+  .validation{ font-size:13.5px; color:var(--shu); margin:14px 0 0; min-height:1em; }
+
+  /* ---------- Results ---------- */
+  #results{ display:none; }
+  #results.show{ display:block; animation:rise .6s ease both; }
+  @keyframes rise{ from{ opacity:0; transform:translateY(14px);} to{ opacity:1; transform:none;} }
+
+  .result-head{ text-align:center; margin:0 0 8px; }
+  .result-head h2{
+    font-family:"Spectral",serif; font-weight:500; font-size:clamp(26px,5vw,38px);
+    margin:0 0 6px;
+  }
+  .result-head p{ color:var(--ink-soft); font-family:"Spectral",serif; font-size:17px; margin:0 auto; max-width:52ch; }
+
+  .figure-wrap{ display:flex; justify-content:center; margin:8px 0 4px; }
+  svg.radar{ width:min(440px,100%); height:auto; overflow:visible; }
+  .axis-label{ font-family:"Inter",sans-serif; font-size:11.5px; fill:var(--ink-soft); font-weight:500; }
+  .axis-val{ font-family:"Inter",sans-serif; font-size:11px; fill:var(--gold); font-weight:600; }
+
+  .summary{ text-align:center; margin:6px 0 30px; }
+  .summary .big{ font-family:"Spectral",serif; font-size:40px; color:var(--ink); line-height:1; }
+  .summary .big small{ font-size:18px; color:var(--muted); }
+  .summary .cap{ font-size:13px; letter-spacing:0.08em; color:var(--muted); text-transform:uppercase; margin-top:6px; }
+
+  .reflect{ background:var(--paper-card); border:1px solid var(--line); border-radius:2px; padding:24px clamp(20px,4vw,28px); margin:0 0 22px; }
+  .reflect h3{ font-family:"Inter",sans-serif; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold); margin:0 0 14px; }
+  .reflect .line{ display:flex; justify-content:space-between; gap:16px; padding:9px 0; border-bottom:1px dashed var(--line); font-size:15px; }
+  .reflect .line:last-child{ border-bottom:0; }
+  .reflect .line b{ font-weight:500; color:var(--ink); }
+  .reflect .line span{ color:var(--ink-soft); text-align:right; }
+  .reflect .lowest{ margin-top:16px; font-family:"Spectral",serif; font-size:16px; color:var(--ink-soft); }
+  .reflect .lowest em{ color:var(--ink); font-style:normal; font-weight:500; }
+
+  .status{ font-size:13px; color:var(--muted); text-align:center; margin:16px 0 0; min-height:1em; }
+
+  footer{ margin-top:60px; text-align:center; font-size:12.5px; color:var(--muted); }
+  footer a{ color:var(--ink-soft); }
+
+  @media (max-width:520px){
+    .scale-opt label{ height:42px; font-size:14px; }
+    .scale-row{ gap:4px; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{ animation:none !important; transition:none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ INTRO + FORM ============ -->
+  <header>
+    <p class="eyebrow"><span class="jp">生きがい</span> · ikigai · rediscover yourself</p>
+    <h1>Ikigai <span class="thin">Needs</span></h1>
+    <p class="lede">Eight quiet questions, drawn from Mieko Kamiya's study of what makes a life feel worth living. There are no good or high answers — only your own, honestly given.</p>
+    <p class="note">Read each statement and mark how true it feels for you right now, from 1 (not at all) to 7 (completely). At the end you'll see the shape your answers make — a reflection, not a score.</p>
+  </header>
+
+  <hr class="rule" />
+
+  <form id="survey" novalidate>
+    <div class="progress" aria-hidden="true">
+      <div class="progress-track"><div class="progress-fill" id="pfill"></div></div>
+      <div class="progress-label"><span id="pcount">0</span> of 8 answered</div>
+    </div>
+
+    <div id="items"></div>
+
+    <label class="consent" id="consentBox">
+      <input type="checkbox" id="consent" />
+      <span>I'm happy for my anonymous answers to be shared with the researcher to help develop this work.</span>
+    </label>
+
+    <div class="actions">
+      <button type="submit" class="btn" id="submitBtn">See my drivers</button>
+      <p class="validation" id="validation" role="alert"></p>
+    </div>
+  </form>
+
+  <!-- ============ RESULTS ============ -->
+  <section id="results" aria-live="polite">
+    <div class="result-head">
+      <h2>Your resonance</h2>
+      <p>This is the shape your answers made today. Notice where it reaches out, and where it draws in.</p>
+    </div>
+
+    <div class="figure-wrap">
+      <svg class="radar" id="radar" viewBox="0 0 400 400" role="img" aria-label="Octagon figure showing your eight scores"></svg>
+    </div>
+
+    <div class="summary">
+      <div class="big" id="avg">—<small>/7</small></div>
+      <div class="cap">average across the eight</div>
+    </div>
+
+    <div class="reflect">
+      <h3>Where your answers fell</h3>
+      <div id="breakdown"></div>
+      <p class="lowest" id="lowest"></p>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn ghost" id="downloadBtn" type="button">Download my answers (CSV)</button>
+      <button class="btn ghost" id="restartBtn" type="button">Start again</button>
+    </div>
+    <p class="status" id="status"></p>
+  </section>
+
+  <footer>
+    Based on Mieko Kamiya (神谷美恵子), <em>Ikigai ni tsuite</em> (生きがいについて, "On the Meaning of Life"), 1966.<br />
+    A reflective instrument — not a clinical or validated psychometric measure.
+  </footer>
+</div>
+
+<script>
+/* ============================================================
+   CONFIG
+   ------------------------------------------------------------
+   To collect responses centrally, paste your Google Apps Script
+   Web App URL below (see README). Leave "" for self-scoring only.
+   ============================================================ */
+const COLLECT_ENDPOINT = ""; // e.g. "https://script.google.com/macros/s/AKfy.../exec"
+
+/* The eight needs, in order. Titles + statements are yours to edit. */
+const NEEDS = [
+  { key:"life_satisfaction", title:"Life Satisfaction",
+    text:"My daily life feels full, alive and moving forward." },
+  { key:"bright_future", title:"A Bright Future",
+    text:"I have things to look forward to and feel hopeful about the possibilities ahead." },
+  { key:"change_growth", title:"Change and Growth",
+    text:"I continue to discover new things and experience change and growth in my life." },
+  { key:"resonance", title:"Resonance",
+    text:"I experience meaningful connections with others and feel that my presence is needed." },
+  { key:"freedom", title:"Freedom",
+    text:"I feel able to make meaningful choices about how I live, even within the limitations of my circumstances." },
+  { key:"self_actualisation", title:"Self-actualisation",
+    text:"I use my unique abilities and creativity to bring something of my own into the world." },
+  { key:"meaning_value", title:"Meaning & Value",
+    text:"I feel that my life has meaning, inherent value and value to others." },
+  { key:"purpose", title:"Purpose",
+    text:"I feel that there is a role or purpose in life that is uniquely mine to fulfil." },
+];
+/* Short labels for the octagon vertices */
+const SHORT = ["Life\nSatisfaction","Bright\nFuture","Change &\nGrowth","Resonance","Freedom","Self-\nactualisation","Meaning\n& Value","Purpose"];
+
+/* ---------- Build the form ---------- */
+const itemsEl = document.getElementById("items");
+NEEDS.forEach((n, i) => {
+  const opts = [1,2,3,4,5,6,7].map(v => `
+    <div class="scale-opt">
+      <input type="radio" id="${n.key}_${v}" name="${n.key}" value="${v}" />
+      <label for="${n.key}_${v}">${v}</label>
+    </div>`).join("");
+  itemsEl.insertAdjacentHTML("beforeend", `
+    <div class="item" data-key="${n.key}" data-answered="false">
+      <div class="item-index">${String(i+1).padStart(2,"0")} / 08</div>
+      <div class="item-title">${n.title}</div>
+      <p class="item-statement">${n.text}</p>
+      <fieldset class="scale">
+        <legend class="sr-only">${n.title}: ${n.text}</legend>
+        <div class="scale-row">${opts}</div>
+        <div class="anchors"><span>Not at all true</span><span>Completely true</span></div>
+      </fieldset>
+    </div>`);
+});
+
+/* Show consent line only when collection is on */
+if (COLLECT_ENDPOINT) document.getElementById("consentBox").classList.add("show");
+
+/* ---------- Progress ---------- */
+const pfill = document.getElementById("pfill");
+const pcount = document.getElementById("pcount");
+function answeredCount(){
+  return NEEDS.filter(n => document.querySelector(`input[name="${n.key}"]:checked`)).length;
+}
+document.getElementById("survey").addEventListener("change", e => {
+  if (e.target.matches('input[type="radio"]')){
+    const item = e.target.closest(".item");
+    if (item) item.dataset.answered = "true";
+  }
+  const c = answeredCount();
+  pcount.textContent = c;
+  pfill.style.width = (c/NEEDS.length*100) + "%";
+});
+
+/* ---------- Submit ---------- */
+const form = document.getElementById("survey");
+const validation = document.getElementById("validation");
+let scores = {};
+
+form.addEventListener("submit", e => {
+  e.preventDefault();
+  validation.textContent = "";
+  const missing = NEEDS.filter(n => !document.querySelector(`input[name="${n.key}"]:checked`));
+  if (missing.length){
+    validation.textContent = `Please answer all eight — ${missing.length} still to go.`;
+    document.querySelector(`.item[data-key="${missing[0].key}"]`).scrollIntoView({behavior:"smooth", block:"center"});
+    return;
+  }
+  if (COLLECT_ENDPOINT && !document.getElementById("consent").checked){
+    validation.textContent = "Please tick the box to share your answers, or leave collection off.";
+    return;
+  }
+  scores = {};
+  NEEDS.forEach(n => scores[n.key] = +document.querySelector(`input[name="${n.key}"]:checked`).value);
+  renderResults();
+  if (COLLECT_ENDPOINT) submitToSheet();
+});
+
+/* ---------- Results ---------- */
+function renderResults(){
+  const vals = NEEDS.map(n => scores[n.key]);
+  const avg = (vals.reduce((a,b)=>a+b,0)/vals.length);
+  document.getElementById("avg").innerHTML = avg.toFixed(1) + '<small>/7</small>';
+
+  drawRadar(vals);
+
+  // breakdown, sorted highest first
+  const rows = NEEDS.map(n => ({title:n.title, v:scores[n.key]}))
+                    .sort((a,b)=> b.v - a.v);
+  document.getElementById("breakdown").innerHTML = rows.map(r =>
+    `<div class="line"><b>${r.title}</b><span>${r.v} / 7</span></div>`).join("");
+
+  const lowest = rows[rows.length-1];
+  document.getElementById("lowest").innerHTML =
+    `The quietest note today is <em>${lowest.title}</em>. Not a verdict — a question worth sitting with.`;
+
+  form.style.display = "none";
+  document.querySelector("header .note").style.display = "none";
+  const res = document.getElementById("results");
+  res.classList.add("show");
+  res.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+/* ---------- Octagon radar (hand-drawn SVG) ---------- */
+function drawRadar(vals){
+  const svg = document.getElementById("radar");
+  const cx=200, cy=200, maxR=125, N=8, MAX=7;
+  const ang = i => (-90 + i*(360/N)) * Math.PI/180;
+  const pt = (i, r) => [cx + r*Math.cos(ang(i)), cy + r*Math.sin(ang(i))];
+  let s = "";
+
+  // grid rings (levels 2..7 shown lightly, plus outer)
+  for (let lvl=1; lvl<=MAX; lvl++){
+    const r = maxR * lvl/MAX;
+    const poly = Array.from({length:N}, (_,i)=> pt(i,r).join(",")).join(" ");
+    const isOuter = lvl===MAX;
+    s += `<polygon points="${poly}" fill="none" stroke="var(--line)" stroke-width="${isOuter?1.4:0.8}" opacity="${isOuter?0.9:0.5}"/>`;
+  }
+  // axes
+  for (let i=0;i<N;i++){
+    const [x,y]=pt(i,maxR);
+    s += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--line)" stroke-width="0.8" opacity="0.6"/>`;
+  }
+  // data polygon
+  const dataPts = vals.map((v,i)=> pt(i, maxR*v/MAX));
+  const poly = dataPts.map(p=>p.join(",")).join(" ");
+  s += `<polygon points="${poly}" fill="var(--gold-soft)" stroke="var(--gold)" stroke-width="2"
+          style="transform-origin:${cx}px ${cy}px; animation:grow .7s ease both"/>`;
+  // vertices
+  dataPts.forEach(p => { s += `<circle cx="${p[0]}" cy="${p[1]}" r="3.2" fill="var(--gold)"/>`; });
+
+  // labels + values
+  for (let i=0;i<N;i++){
+    const [lx,ly]=pt(i, maxR+30);
+    const anchor = Math.abs(Math.cos(ang(i)))<0.3 ? "middle" : (Math.cos(ang(i))>0 ? "start" : "end");
+    const lines = SHORT[i].split("\n");
+    const dyStart = -( (lines.length-1) * 6 );
+    const label = lines.map((ln,k)=>`<tspan x="${lx}" dy="${k===0?dyStart:12}">${ln}</tspan>`).join("");
+    s += `<text class="axis-label" x="${lx}" y="${ly}" text-anchor="${anchor}">${label}</text>`;
+    const [vx,vy]=pt(i, maxR*vals[i]/MAX);
+    s += `<text class="axis-val" x="${vx}" y="${vy - 8}" text-anchor="middle">${vals[i]}</text>`;
+  }
+  svg.innerHTML = s +
+    `<style>@keyframes grow{from{transform:scale(0.02);opacity:0}to{transform:scale(1);opacity:1}}
+     @media (prefers-reduced-motion:reduce){polygon{animation:none!important}}</style>`;
+}
+
+/* ---------- CSV download ---------- */
+document.getElementById("downloadBtn").addEventListener("click", () => {
+  const ts = new Date().toISOString();
+  let csv = "need,score\n";
+  NEEDS.forEach(n => csv += `${n.title.replace(/,/g,"")},${scores[n.key]}\n`);
+  const note = (document.getElementById("reflection")?.value||"").replace(/"/g,'""');
+  csv += `\ntimestamp,${ts}\nnote,"${note}"\n`;
+  const blob = new Blob([csv], {type:"text/csv"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "my-ikigai-reflection.csv";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+/* ---------- Restart ---------- */
+document.getElementById("restartBtn").addEventListener("click", () => {
+  form.reset();
+  NEEDS.forEach(n => { const it=document.querySelector(`.item[data-key="${n.key}"]`); if(it) it.dataset.answered="false"; });
+  pcount.textContent="0"; pfill.style.width="0%";
+  document.getElementById("results").classList.remove("show");
+  document.querySelector("header .note").style.display="";
+  form.style.display=""; validation.textContent="";
+  document.getElementById("status").textContent="";
+  window.scrollTo({top:0, behavior:"smooth"});
+});
+
+/* ---------- Optional: send to Google Sheet ---------- */
+function submitToSheet(){
+  const status = document.getElementById("status");
+  status.textContent = "Sharing your answers…";
+  const payload = { timestamp:new Date().toISOString(), note:document.getElementById("reflection")?.value||"" };
+  NEEDS.forEach(n => payload[n.key] = scores[n.key]);
+  fetch(COLLECT_ENDPOINT, {
+    method:"POST",
+    mode:"no-cors",
+    headers:{ "Content-Type":"text/plain;charset=utf-8" }, // avoids CORS preflight with Apps Script
+    body:JSON.stringify(payload)
+  }).then(() => { status.textContent = "Thank you — your answers were shared anonymously."; })
+    .catch(() => { status.textContent = "Your reflection is shown above. (Sharing didn't go through — that's okay.)"; });
+}
+</script>
+</body>
+</html>
